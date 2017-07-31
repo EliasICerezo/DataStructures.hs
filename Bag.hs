@@ -58,4 +58,19 @@ union (Node x n xs) (Node y m ys)
               |x<y = (Node x n (union xs (Node y m ys)))
               |x>y = (Node y m (union (Node x n xs) ys))
 
---Intersection
+intersection:: (Ord a)=>Bag a->Bag a->Bag a
+intersection Empty Empty = Empty
+intersection Empty ys= Empty
+intersection xs Empty= Empty
+intersection xn@(Node x n xs) yn@(Node y m ys)
+                            |x==y = (Node x (n+m) (intersection xs ys))
+                            |x<y = intersection xs yn
+                            |x>y = intersection xn ys
+difference:: (Ord a)=> Bag a->Bag a->Bag a
+difference Empty Empty = Empty
+difference xs Empty = xs
+difference Empty ys = Empty
+difference xn@(Node x n xs) yn@(Node y m ys)
+                            |x==y = if (n-m)==0 then difference xs ys else (Node x (n-m) (difference xs ys))
+                            |x<y = (Node x n (difference xs yn))
+                            |x>y = intersection xn ys
