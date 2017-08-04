@@ -78,7 +78,7 @@ iter bits s = {- drop 2 $ -} iter' (setSeed s)
     f x = x*a + c
 
 
-mask :: Word64 
+mask :: Word64
 mask = shift 1 48 - 1
 
 
@@ -207,6 +207,3 @@ iValDouble (l,h) fromDouble x = scaled_x'
 
 int32Range :: Integer
 int32Range = toInteger (maxBound::Int32) - toInteger (minBound::Int32)
-
-
-

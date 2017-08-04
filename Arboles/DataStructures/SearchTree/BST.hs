@@ -10,7 +10,9 @@ module DataStructures.SearchTree.BST
   , empty
   , isEmpty
   , size
+  , height
   , insert
+  , insertAll
   , search
   , isElem
   , delete
@@ -59,6 +61,12 @@ size :: BST a -> Int
 size Empty           = 0
 size (Node _ lt rt)  = 1 + size lt + size rt
 
+
+height:: BST a->Int
+height Empty = 0
+height (Node _ xs ys) = 1+max (height xs) (height ys)
+
+
 -------------------------------------------------------------------------------
 -- Search
 -------------------------------------------------------------------------------
@@ -84,6 +92,13 @@ insert x' (Node x lt rt)
     | x'<x       = Node x (insert x' lt) rt
     | x'>x       = Node x lt (insert x' rt)
     | otherwise  = Node x' lt rt
+
+
+insertAll :: (Ord a)=> [a]-> BST a -> BST a
+insertAll [] _ = error"Insert de cadena vacia"
+insertAll (x:[]) a = insert x a
+insertAll (x:xs) a = insertAll xs (insert x a)
+
 
 -- Should not modify key in node
 updateOrInsert :: (Ord a) => (a -> a) -> a -> BST a -> BST a
