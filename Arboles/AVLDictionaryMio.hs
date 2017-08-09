@@ -43,4 +43,29 @@ delete:: (Ord a)=> a->Dict a b ->Dict a b
 delete k (D avl) = if isJust (T.search (withKey k) avl) then D (T.delete (withKey k) avl) else (D avl)
 
 get:: (Ord a)=> a->Dict a b->Maybe b
-get k (D avl)=if isJust (T.search (withKey k) avl) then (T.search (withKey k) avl) else Nothing
+get k (D avl)= case T.search (withKey k) avl of
+    Nothing         -> Nothing
+    Just (_ :-> v') -> Just v'
+
+keys:: Dict a b-> [a]
+keys (D avl) = map key (T.inOrder avl)
+
+values:: Dict a b ->[b]
+values (D avl) = map value (T.inOrder avl)
+
+keysvalues:: Dict a b->[(a,b)]
+keysvalues d = crealista (keys d) (values d)
+
+crealista::[a]->[b]->[(a,b)]
+crealista [] [] = []
+crealista (x:xs) (y:ys)= (x,y) : crealista xs ys
+
+creaarbol::(Ord a)=> [a]->[c]->Dict a c->Dict a c
+creaarbol [] [] d = d
+creaarbol (x:xs) (y:ys) d= creaarbol xs ys (insert x y d)
+
+mapValues ::(Ord a)=> (b->c) ->Dict a b-> Dict a c
+mapValues fun (D avl) =creaarbol (keys (D avl)) (map fun (values (D avl))) empty
+
+d::(Ord a,Num a,Num b)=>Dict a b
+d= insert 1 2 (insert 3 5 (insert 4 7 empty))
