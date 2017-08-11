@@ -1,7 +1,13 @@
 
 data TreeB a = EmptyB | NodeB a (TreeB a) (TreeB a) deriving Show
 
+t1::TreeB Integer
+t1 =(NodeB 1 (NodeB 2 EmptyB EmptyB) (NodeB 3 (NodeB 4 EmptyB EmptyB) (NodeB 5 EmptyB EmptyB)))
 
+
+isEmpty:: TreeB a->Bool
+isEmpty EmptyB = True
+isEmpty _ = False
 
 mirror::TreeB a->TreeB a
 mirror EmptyB = EmptyB
@@ -17,3 +23,12 @@ simetricos x EmptyB = False
 simetricos (NodeB x lt rt) (NodeB y ly ry)
                   |x==y = (simetricos lt ly) && (simetricos rt ry)
                   |otherwise = False
+
+leafsB:: TreeB a->[a]
+leafsB x= hojas x []
+
+hojas:: TreeB a->[a]->[a]
+hojas EmptyB  xs= xs
+hojas (NodeB x lt rt) xs
+            |isEmpty lt==True && isEmpty rt==True = xs++[x]
+            |otherwise= xs++(leafsB lt)++(leafsB rt)
