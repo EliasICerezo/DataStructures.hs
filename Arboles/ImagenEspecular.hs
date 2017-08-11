@@ -41,3 +41,32 @@ interno EmptyB xs = xs
 interno (NodeB x lt rt) xs
           |isEmpty lt ==False || isEmpty rt ==False= xs ++ [x] ++(internalsB lt)++(internalsB rt)
           |otherwise = xs++(internalsB lt)++(internalsB rt)
+
+
+treeToString::(Show a)=> TreeB a->String
+treeToString x = convierte x []
+
+convierte::(Show a)=> TreeB a->[Char]->[Char]
+convierte EmptyB xs = xs
+convierte (NodeB x lt rt) xs
+                |isEmpty lt && isEmpty rt =show x
+                |otherwise =xs++ show x ++" (" ++ treeToString lt ++ " , " ++ treeToString rt ++ " )"
+
+--WIP
+-- stringToTree::[Char]->TreeB Char
+-- stringToTree [] = EmptyB
+-- stringToTree l@(x:xs)
+--             |next l == '('
+--             |otherwise= (NodeB (next l) EmptyB EmptyB)
+--
+-- preparalista::[Char]->[Char]
+-- preparalista []=[]
+-- preparalista (x:xs)
+--               |x==' '=preparalista xs
+--               |otherwise = (x:xs)
+--
+-- next::[Char]->Char
+-- next [] = '?'
+-- next (x:xs)
+--         |x==' ' = next xs
+--         |otherwise = x
