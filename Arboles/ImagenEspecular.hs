@@ -32,3 +32,12 @@ hojas EmptyB  xs= xs
 hojas (NodeB x lt rt) xs
             |isEmpty lt==True && isEmpty rt==True = xs++[x]
             |otherwise= xs++(leafsB lt)++(leafsB rt)
+
+internalsB:: TreeB a->[a]
+internalsB x = interno x []
+
+interno::TreeB a->[a]->[a]
+interno EmptyB xs = xs
+interno (NodeB x lt rt) xs
+          |isEmpty lt ==False || isEmpty rt ==False= xs ++ [x] ++(internalsB lt)++(internalsB rt)
+          |otherwise = xs++(internalsB lt)++(internalsB rt)
