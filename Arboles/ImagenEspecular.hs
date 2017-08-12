@@ -52,21 +52,38 @@ convierte (NodeB x lt rt) xs
                 |isEmpty lt && isEmpty rt =show x
                 |otherwise =xs++ show x ++" (" ++ treeToString lt ++ " , " ++ treeToString rt ++ " )"
 
---WIP
--- stringToTree::[Char]->TreeB Char
--- stringToTree [] = EmptyB
--- stringToTree l@(x:xs)
---             |next l == '('
---             |otherwise= (NodeB (next l) EmptyB EmptyB)
---
--- preparalista::[Char]->[Char]
--- preparalista []=[]
--- preparalista (x:xs)
---               |x==' '=preparalista xs
---               |otherwise = (x:xs)
---
--- next::[Char]->Char
--- next [] = '?'
--- next (x:xs)
---         |x==' ' = next xs
---         |otherwise = x
+
+stringToTree::[Char]->TreeB Char
+stringToTree [] = EmptyB
+stringToTree l@(x:xs) = (NodeB (next l) (gen (tail (preparalista l))!!0) (gen (tail (preparalista l))!!1))
+
+
+gen::String->[TreeB Char]
+gen [] = [EmptyB, EmptyB]
+gen l@(x:xs)
+          |next l == '(' = extraenodo (tail (preparalista l))
+          |otherwise= [EmptyB, EmptyB]
+
+extraenodo:: String->[TreeB Char]
+extraenodo [] = error"no se debe llamar a esta funcion con la lista vacia."
+extraenodo l
+          |next l /= '(' && next l /= ',' && next l /= ')' && next (tail (preparalista l))==',' && next (salta 3 l) == '(' = [(NodeB (next l) EmptyB EmptyB), (NodeB (next (salta 2 l))  (extraenodo(salta 3 l)!!0) (extraenodo(salta 3 l)!!1)   ) ]
+          |next l /= '(' && next l /= ',' && next l /= ')' && next (tail (preparalista l))==',' = [(NodeB (next l) EmptyB EmptyB),(NodeB (next (tail (preparalista (tail (preparalista l))))) EmptyB EmptyB) ]
+          |next l /= '(' && next l /= ',' && next l /= ')' && next (tail (preparalista l))=='(' = [(NodeB (next l) ((extraenodo (tail (preparalista l)))!!0) ((extraenodo (tail (preparalista l)))!!1)), (NodeB (next (salta 7 l)) (((extraenodo (salta 7 l)))!!0) (((extraenodo (salta 7 l)))!!1) )]
+          |otherwise = gen l
+
+salta:: Integer->String->String
+salta 0 l = l
+salta n l = salta (n-1) (tail (preparalista l))
+
+preparalista::[Char]->[Char]
+preparalista []=[]
+preparalista (x:xs)
+              |x==' '=preparalista xs
+              |otherwise = (x:xs)
+
+next::[Char]->Char
+next [] = '?'
+next (x:xs)
+        |x==' ' = next xs
+        |otherwise = x
