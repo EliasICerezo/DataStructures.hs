@@ -14,30 +14,34 @@ g1 = mkWeightedGraphEdges ['a','b','c','d','e']
 
 
 
-contains::(Eq a)=>a->[a]->Bool
+contains::(Eq a)=>a->[(a,Int)]->Bool
 contains x [] = False
 contains x (y:ys)
-        |x==y = True
+        |x==vertice y = True
         |otherwise = contains x ys
 
 
-inicializav:: (Eq a)=> a->[a]->[a]
-inicializav e []=[]
-inicializav e xs= [ x | x<-xs, x/=e ]
-
-inicializad::(Ord w,Num w)=> a->Dictionary w a
-inicializad x = (insert 0 x empty)
-
-quita:: (Eq a)=> a->[a]->[a]
-quita x xs = inicializav x xs
 
 
-caminosminimos::(Ord w, Eq a)=> WeightedGraph a w->[a]->[a]->Dictionary w a->[[a]]
-caminosminimos g [] vopt cpopt = []
-caminosminimos g v@(v1:vs) vopt@(vo:vos) cpopt = caminosminimos g (quita (vertice c) v) (vopt++(singleton(vertice c))) (insert (peso c) (vertice c) cpopt)
-   where
-      c = ccmin g vopt v (last (successors g vo))
+quita:: (Eq a)=> (a,w)->[(a,w)]->[(a,w)]
+quita _ [] = []
+quita (a,w1) (x:xs)
+        |a==vertice x = quita (a,w1) xs
+        |otherwise = x:quita (a,w1) xs
 
+quitalista::(Eq a)=> a->[a]->[a]
+quitalista x [] = []
+quitalista x (y:ys)
+          | x/= y = y: quitalista x ys
+          |otherwise = quitalista x ys
+
+
+
+caminosmascortos::(Eq a,Ord w,Ord a,Num w)=>WeightedGraph a w->[a]->[a]->Dictionary w a->[[a]]
+caminosmascortos g [] vopt cpopt= []
+caminosmascortos g v@(x:xs) vopt@(y:ys) cpopt=  [vopt] ++ caminosmascortos g (quitalista (vertice aux) v) (vopt++(singleton (vertice aux))) (insert (peso aux) (vertice aux) cpopt)
+      where
+          aux= caminominimo g v vopt
 
 singleton::a->[a]
 singleton x= [x]
@@ -49,15 +53,26 @@ vertice (x,w) = x
 peso::(a,w)->w
 peso (x,w)=w
 
+caminominimo::(Num w,Ord a,Ord w)=>WeightedGraph a w->[a]->[a]->(a,w)
+caminominimo g v vopt = minpath aux (head aux)
+    where
+        aux=sacarcaminos g v vopt
 
-cmin::(Ord w, Eq a)=> [(a,w)]->(a,w)->[a]->(a,w)
-cmin [] m vs= m
-cmin l@(x:xs) m vs
-          |peso x < peso m && (contains (vertice x) vs)==True  = cmin xs x vs
-          |otherwise =  cmin xs m vs
+minpath::(Ord a, Ord w)=> [(a,w)]->(a,w)->(a,w)
+minpath [] m= m
+minpath (x:xs) m = if peso x<peso m then minpath xs x else minpath xs m
 
-ccmin::(Ord w, Eq a)=> WeightedGraph a w->[a]->[a]->(a,w)->(a,w)
-ccmin g [] vs m = m
-ccmin g (y:ys) vs m =if peso c < peso m then ccmin g ys vs c else ccmin g ys vs m
-  where
-    c=cmin (successors g y) (head (successors g y)) vs
+
+sacarcaminos::(Num w,Eq a)=> WeightedGraph a w->[a]->[a]->[(a,w)]
+sacarcaminos g _ [] = error" La lista de vertices vopt no puede estar vacia"
+sacarcaminos g [] _ = error" La lista de vertices v no puede estar vacia"
+sacarcaminos g v vopt = caminosinutiles (caminos g v vopt) vopt
+
+
+caminos:: WeightedGraph a w->[a]->[a]->[(a,w)]
+caminos g v [] = []
+caminos g v@(x:xs) vopt@(y:ys) = successors g y ++caminos g v ys
+
+caminosinutiles::(Eq a, Num w)=> [(a,w)]->[a]->[(a,w)]
+caminosinutiles x [] = x
+caminosinutiles x (y:ys) = caminosinutiles (quita (y,0) x) ys
