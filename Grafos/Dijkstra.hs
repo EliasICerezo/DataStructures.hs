@@ -36,6 +36,8 @@ quitalista x (y:ys)
           |otherwise = quitalista x ys
 
 
+shortestPaths:: (Eq a,Ord w,Ord a,Num w)=>WeightedGraph a w->a->[[a]]
+shortestPaths g x =caminosmascortos g (quitalista x (vertices g)) [x] (insert 0 x empty)
 
 caminosmascortos::(Eq a,Ord w,Ord a,Num w)=>WeightedGraph a w->[a]->[a]->Dictionary w a->[[a]]
 caminosmascortos g [] vopt cpopt= []
