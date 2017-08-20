@@ -15,6 +15,7 @@ module DataStructures.Graph.Graph
   , edges
   , vertices
   , degree
+  , actualizagrafo
   ) where
 
 import Data.List(nub, nubBy, intercalate)
@@ -40,6 +41,23 @@ successors (G vs sucs) v  = sucs v
 
 vertices :: Graph a -> [a]
 vertices (G vs sucs)  = vs
+
+borralista::(Eq a)=>a->[a]->[a]
+borralista x [] = []
+borralista x (y:ys)
+              |x==y = borralista x ys
+              |otherwise = y : borralista x ys
+
+deleteedges::(Eq a)=>Graph a-> [(a,a)] ->[(a,a)] ->Graph a
+deleteedges g [] a= quitavertices (vertices g) (vertices g) (mkGraphEdges (vertices g) a)
+deleteedges g (x:xs) a= deleteedges g xs (borralista x a)
+
+quitavertices::(Eq a)=> [a]->[a]->Graph a->Graph a
+quitavertices [] v g = mkGraphEdges v (edges g)
+quitavertices (x:xs) v g= if degree g x ==0 then quitavertices xs (borralista x v) g else quitavertices xs v g
+
+actualizagrafo::(Eq a)=> Graph a->[(a,a)]->Graph a
+actualizagrafo g a= deleteedges g a (edges g)
 
 edges :: (Eq a) => Graph a -> [Edge a]
 edges (G vs sucs)  = [ (v,w) | v <- vs, w <- sucs v ]
