@@ -12,6 +12,7 @@ module DataStructures.PriorityQueue.WBLeftistHeapPriorityQueue
   , first
   , dequeue
   , enqueue
+  ,size
   ) where
 
 import qualified DataStructures.Heap.WBLeftistHeap as H
@@ -35,6 +36,10 @@ first (PQ h)  = H.minElem h
 dequeue :: (Ord a) => PQueue a -> PQueue a
 dequeue (PQ h)  = PQ (H.delMin h)
 
+size::(Ord a)=> PQueue a->Int
+size (PQ h)= length (heapToList h)
+
+
 heapToList :: (Ord a) => H.Heap a -> [a]
 heapToList h
  | H.isEmpty h = []
@@ -53,4 +58,3 @@ instance (Ord a, Arbitrary a) => Arbitrary (PQueue a) where
     arbitrary =  do
       xs <- listOf arbitrary
       return (foldr enqueue empty xs)
-
