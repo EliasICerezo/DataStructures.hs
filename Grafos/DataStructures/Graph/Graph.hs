@@ -16,6 +16,7 @@ module DataStructures.Graph.Graph
   , vertices
   , degree
   , actualizagrafo
+
   ) where
 
 import Data.List(nub, nubBy, intercalate)
@@ -56,6 +57,7 @@ quitavertices::(Eq a)=> [a]->[a]->Graph a->Graph a
 quitavertices [] v g = mkGraphEdges v (edges g)
 quitavertices (x:xs) v g= if degree g x ==0 then quitavertices xs (borralista x v) g else quitavertices xs v g
 
+--Para que se borren las aristas se deben pasar en los 2 sentidos
 actualizagrafo::(Eq a)=> Graph a->[(a,a)]->Graph a
 actualizagrafo g a= deleteedges g a (edges g)
 
