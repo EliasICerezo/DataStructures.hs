@@ -35,7 +35,9 @@ first (DEQ xs ys)
             |length xs ==0 = last ys
             |otherwise = head xs
 
-
+ultimo:: DEQue a-> a
+ultimo (DEQ [] []) = error"first on empty dq"
+ultimo ()
 
 
 iguala:: [a]->[a]->([a],[a])
