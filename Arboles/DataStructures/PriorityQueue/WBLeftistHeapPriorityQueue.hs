@@ -12,7 +12,7 @@ module DataStructures.PriorityQueue.WBLeftistHeapPriorityQueue
   , first
   , dequeue
   , enqueue
-  ,size
+  , size
   ) where
 
 import qualified DataStructures.Heap.WBLeftistHeap as H
